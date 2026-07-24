@@ -22,6 +22,7 @@ export const portfolioData = {
   ],
   about: {
     title: "About Me",
+    description: "Building scalable backend systems, AI products, and tools.",
     resumeLink: "https://drive.google.com/uc?export=download&id=1cMso5a9kgt-pFG5xa7Qe2LItPR-dsXue", // Direct download link to your resume
     downloadText: "Download Resume",
     status: "Open for Interviews"
@@ -55,7 +56,7 @@ export const portfolioData = {
         demoLink: 'https://youtu.be/WGAw3S2-gz0?si=OQ9VnJ1Rp6OB33JP',
         videoUrl: 'https://i.imgur.com/JZE2reh.mp4',
         githubLink: '#',
-        image: 'https://i.imgur.com/Ml36i08.pngmy',
+        image: 'https://i.imgur.com/Ml36i08.png',
         liveDemoText: "Live Demo",
         githubText: "GitHub"
       },

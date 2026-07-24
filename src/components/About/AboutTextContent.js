@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { theme } from '../../theme';
 
-const AboutTextContent = ({ name, title, description, animationsEnabled = true }) => {
+const AboutTextContent = ({ name, description, animationsEnabled = true }) => {
   const MotionSpan = animationsEnabled ? motion.span : 'span';
   return (
     <div className="about-text-content">
-      <h1 style={{ fontSize: '36px', marginBottom: '10px', color: theme.colors.white, fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+      <p className="about-eyebrow">
         <MotionSpan
-          style={{ display: 'inline-block', marginRight: '0.5rem' }}
+          className="about-wave"
           {...(animationsEnabled
             ? {
                 initial: { scale: 1 },
@@ -28,10 +27,9 @@ const AboutTextContent = ({ name, title, description, animationsEnabled = true }
           👋
         </MotionSpan>
         Hi, I'm
-      </h1>
-      <h1 className="intro-name" style={{ color: theme.colors.white }}>{name}</h1>
-      <p className="intro-title" style={{ color: theme.colors.white }}>{title}</p>
-      <p style={{ color: theme.colors.white }}>{description}</p>
+      </p>
+      <h1 className="intro-name">{name}</h1>
+      <p className="about-description">{description}</p>
     </div>
   );
 };

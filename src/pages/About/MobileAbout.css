@@ -167,6 +167,84 @@
 
 /* Mobile Styles for About Section */
 @media screen and (max-width: 768px) {
+  .about-container.about-layout-mobile {
+    box-sizing: border-box;
+    height: auto;
+    min-height: 54rem;
+    margin-top: 0;
+    padding: 6rem 0.625rem clamp(23rem, 105vw, 29rem);
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .about-layout-mobile .about-content {
+    justify-content: flex-start;
+  }
+
+  .about-layout-mobile .about-text-wrapper {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .about-layout-mobile .about-text-content {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #2A2A2A;
+    text-align: center;
+  }
+
+  .about-layout-mobile .about-eyebrow,
+  .about-layout-mobile .about-description {
+    margin: 0;
+    color: #2A2A2A;
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .about-layout-mobile .about-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .about-layout-mobile .about-wave {
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .about-layout-mobile .intro-name {
+    margin: 0;
+    color: #2A2A2A;
+    font-size: clamp(3.5rem, 18vw, 5.5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.065em;
+  }
+
+  .about-layout-mobile .about-description {
+    max-width: 22rem;
+    margin-top: 1rem;
+  }
+
+  .about-layout-mobile .about-mobile-actions {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.25rem;
+  }
+
+  .about-layout-mobile .about-bottom-portrait {
+    width: clamp(14.5rem, 72vw, 20rem);
+    max-height: none;
+  }
+
   .about-container {
     margin-top: 5vh; /* Added padding to the top of the section */
   }
