@@ -56,6 +56,14 @@
 .cms-header-actions { display: flex; align-items: center; gap: 8px; }
 .cms-session-email { font-size: 12px; color: #86868b; }
 .cms-tray button { white-space: nowrap; }
+/* Align the toolbar controls without restyling the actual component previews. */
+.cms-tray[data-cms-theme="apple"] .cms-tray-header .ui-button { border-radius: 999px; }
+.cms-tray[data-cms-theme="target"] .cms-tray-header .tgt-button {
+  font-size: 17px;
+  line-height: 1.5;
+  padding: 0.4rem 0.75rem;
+  border-width: 1px;
+}
 .cms-publish-alert { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 32px; color: #7a4100; background: #fff7e6; border-bottom: 1px solid #f2d39b; font-size: 14px; }
 .cms-publish-alert-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .cms-access-error { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 16px; color: #1d1d1f; background: #fff; border-radius: 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14); }
