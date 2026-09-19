@@ -29,12 +29,14 @@
 }
 
 .tgt-education-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  --education-image-height: 302px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
   padding: 1.5rem;
-  min-width: 30rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .tgt-education-content {
@@ -44,12 +46,12 @@
   align-items: flex-start;
   text-align: left;
   background-color: #303030;
-  min-height: 302px;
-  max-height: 302px;
+  min-width: 0;
+  min-height: var(--education-image-height);
   border-radius: 12px 0px 0px 8px;
-  padding: 3.5rem 8rem;
+  padding: 4rem clamp(1.25rem, 5vw, 5rem) 2rem;
   position: relative;
-  padding-top: 4rem;
+  overflow-wrap: anywhere;
 }
 
 .tgt-education-content::before {
@@ -69,18 +71,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
   background-color: #ffffff;
-  min-height: 302px;
-  max-height: 302px;
+  height: var(--education-image-height);
+  min-width: 0;
+  width: 100%;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  overflow: hidden;
   border-radius: 0px 8px 8px 0px;
-  min-width: 500px;
 }
 
 .tgt-education-logo {
-  width: 500px;
-  height: 500px;
+  /* Both dimensions come from the frame, never the remote image's intrinsic size. */
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 .tgt-education-name {
@@ -103,27 +114,13 @@
   }
 
   .tgt-education-item {
-    min-width: 100%;
+    --education-image-height: 260px;
     gap: 1rem;
     padding: 1rem;
   }
 
   .tgt-education-content {
     padding: 3rem 2.25rem 1.75rem;
-    min-height: 260px;
-    max-height: 260px;
-    flex: 1;
-  }
-
-  .tgt-education-logo-wrapper {
-    min-width: 260px;
-    min-height: 260px;
-    max-height: 260px;
-  }
-
-  .tgt-education-logo {
-    width: 250px;
-    height: 250px;
   }
 
   .tgt-education-name {
@@ -143,8 +140,8 @@
   }
 
   .tgt-education-item {
-    flex-direction: column;
-    align-items: stretch;
+    --education-image-height: 180px;
+    grid-template-columns: minmax(0, 1fr);
     padding: 0;
     gap: 0;
   }
@@ -153,7 +150,6 @@
     width: 100%;
     border-radius: 12px 12px 0 0;
     min-height: auto;
-    max-height: none;
     padding: 3rem 1.25rem 1.25rem;
   }
 
@@ -162,17 +158,8 @@
   }
 
   .tgt-education-logo-wrapper {
-    width: 100%;
-    min-width: 0;
-    min-height: 180px;
-    max-height: 180px;
     border-radius: 0 0 8px 8px;
     padding: 1rem;
-  }
-
-  .tgt-education-logo {
-    width: 300px;
-    height: 300px;
   }
 
   .tgt-education-name {
@@ -198,8 +185,4 @@
     font-size: 1.25rem;
   }
 
-  .tgt-education-logo {
-    width: 150px;
-    height: 150px;
-  }
 }

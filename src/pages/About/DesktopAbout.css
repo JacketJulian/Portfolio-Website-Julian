@@ -103,6 +103,10 @@
   user-select: none;
 }
 
+.cms-editable .about-bottom-portrait {
+  pointer-events: auto;
+}
+
 @media screen and (min-width: 769px) and (max-width: 1100px) {
   .about-layout-desktop .about-content {
     padding-top: clamp(5.5rem, 11vh, 7rem);

@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/cms-server/node_modules
+**/client_secret*.json
+.env
 /.pnp
 .pnp.js
 

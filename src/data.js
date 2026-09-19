@@ -31,6 +31,22 @@ export const portfolioData = {
     title: "My Projects 🧑🏻‍💻",
     projects: [
       {
+        title: 'MyndHaven - Mental Wellness Platform',
+        description: `MyndHaven is a full mental wellness platform I designed and built end to end. The SwiftUI iOS app (iOS 17+) covers journaling with offline drafts, eight validated screenings (PHQ-9, GAD-7, ASRS, PCL-5, PSS-10, ISI, MDQ, OCI-R) with scored history, mood tracking, community posts and groups, wellness events, therapist appointments, and a streaming AI companion. Behind it sits a Go microservice backend: a stateless gateway that authenticates every request at the edge, a JWT auth service with rotating refresh sessions, and a PostgreSQL core API that owns all product data. AI runs locally through a FastAPI + Ollama (Gemma 3) ReACT agent with a crisis safety gate and tools that can read journals, log moods, and find therapists. A Next.js + TypeScript therapist dashboard and the myndhaven.com waitlist site round out the platform.`,
+        demoLink: 'https://myndhaven.com',
+        videoUrl: 'https://i.imgur.com/Vyjihls.mp4',
+        image: '/assets/myndhaven-card.svg',
+        liveDemoText: "Visit MyndHaven.com"
+      },
+      {
+        title: 'Skipper - Cozy Jump Rope Fitness App',
+        description: `Skipper is an iPhone jump-rope fitness app built with Swift 6, SwiftUI, MetalKit, and SwiftData, with a Swift server package alongside it. One persisted character configuration drives two interchangeable renderers: a layered 2D SwiftUI scene and a procedural Metal 3D scene with a constrained camera, soft shadows, and a GPU particle system on a memory-pressure-aware resource pool. Sessions run through a single state machine behind a pluggable tracker factory, so the simulated tracker can be swapped for a physical-motion path that reads Core Motion from compatible AirPods and a companion watchOS capture app, which streams samples into append-only JSONL fixtures for observer-labeled validation. Rhythm Garden scores beat-matched routines against the player's Apple Music library through MusicKit, Guided Flow coaches self-relative cadence zones rather than a universal target, and every sound is synthesized live through an AVAudioEngine voice pool instead of mixed from samples. On the server side, a Hummingbird and PostgreSQL economy service enforces earning rules from a shared pure-Swift package: idempotent session ingest, an append-only token ledger whose double-credit defense is a database constraint, attestation verdicts recorded as scored at the time, and SQL migrations verified by a GitHub Actions Postgres job. Roughly 1,400 tests run across the package and hosted suites, next to a full accessibility pass covering Dynamic Type, VoiceOver scene descriptions, and Reduce Motion.`,
+        githubLink: '#',
+        videoUrl: '/assets/skipper-demo.mp4',
+        image: '/assets/skipper-card.svg',
+        githubText: "GitHub"
+      },
+      {
         title: 'Mobile Shopping App (Target-Inspired UI)',
         description: 'E-commerce mobile app built with React Native and Typescript simulating a real-world storefront with cart tracking, sessions, and RESTful APIs',
         demoLink: 'https://youtu.be/6tOS1sOhP3M',
@@ -70,17 +86,6 @@ export const portfolioData = {
         liveDemoText: "Live Demo",
         githubText: "GitHub",
       },
-      {
-        title: 'MyndHaven - Mental Wellness Platform (In Development)',
-        description: `MyndHaven is a mobile app platform dedicated to supporting mental wellness, 
-        offering users tools, resources, and features to manage stress, build resilience, and prioritize their emotional well-being. To build anticipation and gather early 
-          feedback, I created myndhaven.com—a sleek, single-page waitlist landing site where interested users can join the early access list by submitting their email. The page 
-          highlights the app's upcoming features, mission, and vision while encouraging sign-ups to be among the first to experience the platform upon launch.`,
-          demoLink: 'https://myndhaven.com',
-          videoUrl: 'https://i.imgur.com/Vyjihls.mp4',
-          liveDemoText: "Visit MyndHaven.com",
-          image: 'https://i.imgur.com/6Twvb9e.png',
-        }
       ]
     },
     headings: {

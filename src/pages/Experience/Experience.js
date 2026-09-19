@@ -2,18 +2,19 @@ import React from 'react';
 import { portfolioData } from '../../data';
 import './Experience.css';
 import SectionTitle from '../../components/SectionTitle/SectionTitle';
-import SectionIcon from '../../components/SectionIcon/SectionIcon';
-import SectionDescription from '../../components/SectionDescription/SectionDescription';
-import ExperienceSkills from '../../components/Experience/ExperienceSkills';
+import PortfolioItem from '../../components/PortfolioItem/PortfolioItem';
+import { mergeCmsItems } from '../../utils/cmsDrafts';
 
-const Experience = () => {
+const Experience = ({ additionalJobs = [], cmsPreview = null }) => {
+
   // Sort jobs by date in descending order (most recent first)
   const sortedJobs = [...portfolioData.experience.jobs].sort((a, b) => {
     // Assuming date format is "YYYY - YYYY" or "YYYY"
     // Extract the end year for comparison
     const getEndYear = (dateString) => {
       const parts = dateString.split(' - ');
-      return parseInt(parts[parts.length - 1]);
+      const endYear = parts[parts.length - 1];
+      return endYear.toLowerCase() === 'present' ? Number.MAX_SAFE_INTEGER : parseInt(endYear, 10);
     };
 
     const yearA = getEndYear(a.date);
@@ -21,27 +22,15 @@ const Experience = () => {
 
     return yearB - yearA; // Descending order
   });
+  const jobs = mergeCmsItems('experience', sortedJobs, additionalJobs);
 
   return (
     <div className="experience-container" id="experience" data-testid="experience-section">
       <SectionTitle className="experience-heading">{portfolioData.headings.experience}</SectionTitle>
       <div className="experience-list">
-        {sortedJobs.map((job, index) => (
-          <div className="experience-item" key={index}>
-            <div className="experience-header">
-              <SectionIcon src={job.logo} alt={job.companyName} className="experience-logo" />
-              <SectionDescription
-                title={job.companyName}
-                subtitle={job.jobTitle}
-                date={job.date}
-                location={job.location}
-                className="experience-details"
-                dateClassName="experience-date"
-                locationClassName="experience-location"
-              />
-            </div>
-            <ExperienceSkills techStack={job.techStack} />
-          </div>
+        {cmsPreview && <PortfolioItem type="experience" theme="apple" item={cmsPreview} className="cms-item-placeholder" data-cms-placeholder="experience" aria-hidden="true" inert={true} />}
+        {jobs.map((job) => (
+          <PortfolioItem type="experience" theme="apple" item={job} key={job.sourceId || job.id} />
         ))}
       </div>
     </div>

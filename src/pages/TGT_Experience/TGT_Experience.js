@@ -1,28 +1,20 @@
 import React from 'react';
 import './TGT_Experience.css';
 import { portfolioData } from '../../data';
+import PortfolioItem from '../../components/PortfolioItem/PortfolioItem';
+import { mergeCmsItems } from '../../utils/cmsDrafts';
 
-const TGT_Experience = () => {
-  const logoMap = {
-    'Target Corporation': '/assets/TGT_Experience.svg',
-    'The Dev Effect': '/assets/TDE_Experience.svg',
-    'Southern Connecticut State University': '/assets/SCSU_Experience.svg',
-  };
+const TGT_Experience = ({ additionalJobs = [], cmsPreview = null }) => {
+  const jobs = mergeCmsItems('experience', portfolioData.experience.jobs, additionalJobs);
 
   return (
     <section className="tgt-experience" id="experience" data-testid="tgt-experience">
       <div className="tgt-experience-inner">
         <h2 className="tgt-experience-title">Places I've worked at</h2>
         <div className="tgt-experience-row">
-          {portfolioData.experience.jobs.map((job) => (
-            <div className="tgt-experience-item" key={job.companyName}>
-              <img
-                src={logoMap[job.companyName]}
-                alt={job.companyName}
-                className="tgt-experience-logo"
-              />
-              <span className="tgt-experience-name">{job.companyName}</span>
-            </div>
+          {cmsPreview && <PortfolioItem type="experience" theme="target" item={cmsPreview} className="cms-item-placeholder" data-cms-placeholder="experience" aria-hidden="true" inert={true} />}
+          {jobs.map((job) => (
+            <PortfolioItem type="experience" theme="target" item={job} key={job.sourceId || job.id} />
           ))}
         </div>
       </div>

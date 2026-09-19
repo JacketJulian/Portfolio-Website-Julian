@@ -1,0 +1,16 @@
+# Build and test a candidate without deploying or changing live traffic.
+steps:
+- name: 'node:22-alpine'
+  dir: 'cms-server'
+  entrypoint: 'sh'
+  args: ['-c', 'npm ci && npm test']
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-t'
+  - 'us-central1-docker.pkg.dev/optical-genre-468001-v1/cloud-run-source-deploy/portfolio-website-julian/portfolio:$BUILD_ID'
+  - '.'
+images:
+- 'us-central1-docker.pkg.dev/optical-genre-468001-v1/cloud-run-source-deploy/portfolio-website-julian/portfolio:$BUILD_ID'
+options:
+  logging: CLOUD_LOGGING_ONLY

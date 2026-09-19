@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import DesktopAbout from './DesktopAbout';
 import MobileAbout from './MobileAbout';
+import getAboutContent from '../../utils/cmsAbout';
 
-const About = ({ animationsEnabled }) => {
+const About = ({ animationsEnabled, content = getAboutContent('apple') }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -17,8 +18,8 @@ const About = ({ animationsEnabled }) => {
   }, []);
 
   return isMobile
-    ? <MobileAbout animationsEnabled={animationsEnabled} />
-    : <DesktopAbout animationsEnabled={animationsEnabled} />;
+    ? <MobileAbout animationsEnabled={animationsEnabled} content={content} />
+    : <DesktopAbout animationsEnabled={animationsEnabled} content={content} />;
 };
 
 export default About;

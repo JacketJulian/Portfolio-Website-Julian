@@ -3,3 +3,13 @@ npm-debug.log
 build
 .dockerignore
 server
+.git
+.claude
+.codex
+.agents
+.env
+.env.*
+**/node_modules
+**/*.test.js
+**/coverage
+**/client_secret*.json

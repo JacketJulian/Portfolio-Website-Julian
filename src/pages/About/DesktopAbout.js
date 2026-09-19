@@ -5,17 +5,34 @@ import AboutTextContent from '../../components/About/AboutTextContent';
 import ResumeButton from '../../components/About/ResumeButton';
 import SocialButton from '../../components/About/SocialButton';
 import FloatingInterviewBadges from '../../components/About/FloatingInterviewBadges';
+import useCmsEditable from '../../hooks/useCmsEditable';
+import getAboutContent from '../../utils/cmsAbout';
+import { safeUrl } from '../../utils/cmsDrafts';
 
-const DesktopAbout = ({ animationsEnabled }) => {
+const DesktopAbout = ({ animationsEnabled, content = getAboutContent('apple') }) => {
+  const { className, props } = useCmsEditable({
+    type: 'about',
+    theme: 'apple',
+    item: content,
+    label: 'About section',
+  });
+  const image = safeUrl(content.image);
+  const resumeLink = safeUrl(content.resumeLink);
+
   return (
-    <div className="about-container about-layout-desktop" id="about" data-testid="about-section">
+    <div
+      {...props}
+      className={['about-container', 'about-layout-desktop', className].filter(Boolean).join(' ')}
+      id="about"
+      data-testid="about-section"
+    >
       <FloatingInterviewBadges />
       <div className="about-content">
         <div className="about-text-wrapper">
           <div>
-            <AboutTextContent 
-              name={portfolioData.name}
-              description={portfolioData.about.description}
+            <AboutTextContent
+              name={<span data-cms-field="name">{content.name}</span>}
+              description={<span data-cms-field="description">{content.description}</span>}
               animationsEnabled={animationsEnabled}
             />
           </div>
@@ -31,20 +48,23 @@ const DesktopAbout = ({ animationsEnabled }) => {
                   />
                 ))}
             </div>
-            <div>
-              <ResumeButton 
-                href={portfolioData.about.resumeLink}
-                text={portfolioData.about.downloadText}
+            <div data-cms-field="resumeLink">
+              <ResumeButton
+                href={resumeLink || undefined}
+                text={content.downloadText}
               />
             </div>
           </div>
         </div>
       </div>
-      <img
-        className="about-bottom-portrait"
-        src={`${process.env.PUBLIC_URL}/assets/Julian_About.png`}
-        alt="Julian with a family member"
-      />
+      {image && (
+        <img
+          className="about-bottom-portrait"
+          src={image}
+          alt={content.imageAlt || content.name || 'About portrait'}
+          data-cms-field="image"
+        />
+      )}
     </div>
   );
 };

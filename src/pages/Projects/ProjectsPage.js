@@ -1,32 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { portfolioData } from '../../data';
 import './Projects.css';
 import trackEvent from '../../utils/analytics';
 import ModalWindow from '../../components/ModalWindow/ModalWindow';
 import SectionTitle from '../../components/SectionTitle/SectionTitle';
-import ProjectImage from '../../components/Projects/ProjectImage';
-import ProjectName from '../../components/Projects/ProjectName';
-import Button from '../../components/Button/Button';
+import PortfolioItem from '../../components/PortfolioItem/PortfolioItem';
 import Pagination from '../../components/Pagination/Pagination';
+import { mergeCmsItems } from '../../utils/cmsDrafts';
 
-const ProjectsPage = () => {
-  const projects = portfolioData.projects.projects;
+const ProjectsPage = ({ additionalProjects = [], cmsPreview = null }) => {
+  const newProjects = additionalProjects.filter((project) => !project.sourceId);
+  const projects = mergeCmsItems('project', portfolioData.projects.projects, additionalProjects);
+  const firstDraftId = newProjects.length ? newProjects[newProjects.length - 1].id : null;
   const [showModal, setShowModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [activeDot, setActiveDot] = useState(Math.min(2, Math.max((portfolioData.projects.projects || []).length - 1, 0)));
+  const [activeDot, setActiveDot] = useState(newProjects.length ? 0 : Math.min(2, Math.max((portfolioData.projects.projects || []).length - 1, 0)));
   const gridContainerRef = useRef(null);
   const cardRefs = useRef([]);
+  const previewRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const ignoreScrollRef = useRef(false);
   const ignoreScrollTimeoutRef = useRef(null);
-
-  const titleStyle = {
-    fontWeight: 'bold',
-  };
-
-
+  const focusFrameRef = useRef(null);
+  const previousFirstDraftIdRef = useRef(firstDraftId);
+  const hasCmsPreview = Boolean(cmsPreview);
+  const activeDotRef = useRef(activeDot);
+  const hasCmsPreviewRef = useRef(hasCmsPreview);
+  activeDotRef.current = activeDot;
+  hasCmsPreviewRef.current = hasCmsPreview;
 
   const handleShowModal = (project) => {
     setSelectedProject(project);
@@ -63,13 +66,15 @@ const ProjectsPage = () => {
   const getClosestIndex = () => {
     const container = gridContainerRef.current;
     if (!container) return activeDot;
-    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + container.clientWidth / 2;
     let closestIndex = activeDot;
     let closestDistance = Infinity;
 
     cardRefs.current.forEach((card, index) => {
       if (!card) return;
-      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
       const distance = Math.abs(containerCenter - cardCenter);
       if (distance < closestDistance) {
         closestDistance = distance;
@@ -96,31 +101,57 @@ const ProjectsPage = () => {
     }, 50);
   };
 
-  const scrollToIndex = (index, behavior = 'smooth') => {
+  const scrollToCard = useCallback((card, behavior = 'smooth') => {
     const container = gridContainerRef.current;
-    const card = cardRefs.current[index];
     if (!container || !card) return;
-    const containerWidth = container.clientWidth;
-    const cardLeft = card.offsetLeft;
-    const cardWidth = card.clientWidth;
-    const targetLeft = cardLeft - (containerWidth - cardWidth) / 2;
+    const containerRect = container.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const containerCenter = containerRect.left + container.clientWidth / 2;
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const targetLeft = container.scrollLeft + cardCenter - containerCenter;
     container.scrollTo({ left: targetLeft, behavior });
-  };
+  }, []);
 
-  useEffect(() => {
+  const scrollToIndex = useCallback((index, behavior = 'smooth') => {
+    scrollToCard(cardRefs.current[index], behavior);
+  }, [scrollToCard]);
+
+  useLayoutEffect(() => {
     ignoreScrollRef.current = true;
     if (ignoreScrollTimeoutRef.current) {
       clearTimeout(ignoreScrollTimeoutRef.current);
     }
     ignoreScrollTimeoutRef.current = setTimeout(() => {
       ignoreScrollRef.current = false;
-    }, 250);
+    }, 600);
+
+    if (focusFrameRef.current) {
+      cancelAnimationFrame(focusFrameRef.current);
+      focusFrameRef.current = null;
+    }
+
+    if (hasCmsPreview) {
+      scrollToCard(previewRef.current, 'auto');
+      focusFrameRef.current = requestAnimationFrame(() => scrollToCard(previewRef.current, 'auto'));
+      return;
+    }
+
+    if (previousFirstDraftIdRef.current !== firstDraftId) {
+      previousFirstDraftIdRef.current = firstDraftId;
+      setActiveDot(0);
+      scrollToIndex(0, 'auto');
+      focusFrameRef.current = requestAnimationFrame(() => scrollToIndex(0, 'auto'));
+      return;
+    }
+
     scrollToIndex(activeDot);
-  }, [activeDot]);
+  }, [activeDot, firstDraftId, hasCmsPreview, scrollToCard, scrollToIndex]);
 
   useEffect(() => {
-    scrollToIndex(activeDot, 'auto');
-    const handleResize = () => scrollToIndex(activeDot, 'auto');
+    const handleResize = () => {
+      if (hasCmsPreviewRef.current) scrollToCard(previewRef.current, 'auto');
+      else scrollToIndex(activeDotRef.current, 'auto');
+    };
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -130,15 +161,21 @@ const ProjectsPage = () => {
       if (ignoreScrollTimeoutRef.current) {
         clearTimeout(ignoreScrollTimeoutRef.current);
       }
+      if (focusFrameRef.current) {
+        cancelAnimationFrame(focusFrameRef.current);
+      }
     };
-  }, [activeDot]);
+  }, [scrollToCard, scrollToIndex]);
 
   const renderProjectsGrid = (projectsList) => (
     projectsList.map((project, index) => (
       project ? (
-        <div
-          className={`project-card${activeDot === index ? ' current-view' : ''}`}
-          key={index}
+        <PortfolioItem
+          type="project"
+          theme="apple"
+          item={project}
+          className={activeDot === index ? 'current-view' : ''}
+          key={project.sourceId || project.id}
           ref={(el) => { cardRefs.current[index] = el; }}
           onClick={() => setActiveDot(index)}
           role="button"
@@ -149,31 +186,16 @@ const ProjectsPage = () => {
               setActiveDot(index);
             }
           }}
-        >
-          <ProjectImage
-            src={project.image}
-            alt={project.title}
-            onClick={() => handleCardClick(project, index)}
-          />
-          <div className="project-card-action">
-            <Button
-              variant="secondary"
-              className="project-learn-more"
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveDot(index);
-                handleShowModal(project);
-              }}
-            >
-              Learn more
-            </Button>
-          </div>
-          <ProjectName
-            title={project.title}
-            style={titleStyle}
-            onClick={() => handleCardClick(project, index)}
-          />
-        </div>
+          onViewProject={(_, source, event) => {
+            if (source === 'button') {
+              event.stopPropagation();
+              setActiveDot(index);
+              handleShowModal(project);
+            } else {
+              handleCardClick(project, index);
+            }
+          }}
+        />
       ) : (
         <div
           className="project-card-placeholder"
@@ -199,6 +221,7 @@ const ProjectsPage = () => {
         onScroll={handleScroll}
       >
         <div className="projects-grid">
+          {cmsPreview && <PortfolioItem ref={previewRef} type="project" theme="apple" item={cmsPreview} className="cms-item-placeholder" data-cms-placeholder="project" aria-hidden="true" inert={true} />}
           {renderProjectsGrid(projects)}
         </div>
       </div>
@@ -228,6 +251,7 @@ const ProjectsPage = () => {
               </div>
             )}
             <p>{selectedProject.description}</p>
+            {selectedProject.demoLink && (
             <div className="modal-project-links" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
               <a
                 href={selectedProject.demoLink}
@@ -250,6 +274,7 @@ const ProjectsPage = () => {
                 {selectedProject.liveDemoText}
               </a>
             </div>
+            )}
           </div>
         )}
       </ModalWindow>

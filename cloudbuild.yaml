@@ -1,11 +1,17 @@
 steps:
+# Secrets are runtime Secret Manager references, never frontend build arguments.
+- name: 'node:22-alpine'
+  dir: 'cms-server'
+  entrypoint: 'sh'
+  args: ['-c', 'npm ci && npm test']
+
 # Build the docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/optical-genre-468001-v1/portfolio-website/portfolio:latest', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/optical-genre-468001-v1/cloud-run-source-deploy/portfolio-website-julian/portfolio:$BUILD_ID', '.']
 
 # Push the docker image to Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-central1-docker.pkg.dev/optical-genre-468001-v1/portfolio-website/portfolio:latest']
+  args: ['push', 'us-central1-docker.pkg.dev/optical-genre-468001-v1/cloud-run-source-deploy/portfolio-website-julian/portfolio:$BUILD_ID']
 
 # Deploy to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -14,11 +20,16 @@ steps:
     - 'run'
     - 'deploy'
     - 'portfolio'
-    - '--image=us-central1-docker.pkg.dev/optical-genre-468001-v1/portfolio-website/portfolio:latest'
+    - '--image=us-central1-docker.pkg.dev/optical-genre-468001-v1/cloud-run-source-deploy/portfolio-website-julian/portfolio:$BUILD_ID'
+    - '--project=optical-genre-468001-v1'
     - '--region=us-central1'
     - '--port=8080'
     - '--platform=managed'
     - '--allow-unauthenticated'
+    - '--service-account=portfolio-cms@optical-genre-468001-v1.iam.gserviceaccount.com'
+    - '--update-env-vars=CMS_ORIGIN=https://julianmangual.dev,CMS_ADMIN_EMAIL=jacketjicky@gmail.com,CMS_CONTENT_BUCKET=optical-genre-468001-v1-portfolio-cms'
+    - '--update-secrets=GOOGLE_OAUTH_CLIENT_JSON=portfolio-google-oauth:1,CMS_SESSION_KEY=portfolio-cms-session-key:1'
 
 options:
   logging: CLOUD_LOGGING_ONLY
+  substitutionOption: ALLOW_LOOSE

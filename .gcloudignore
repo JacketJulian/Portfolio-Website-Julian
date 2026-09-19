@@ -1,0 +1,14 @@
+.gcloudignore
+.git
+.claude
+.codex
+.agents
+node_modules
+cms-server/node_modules
+server
+build
+coverage
+.env
+.env.*
+**/client_secret*.json
+*.log

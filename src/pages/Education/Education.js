@@ -2,18 +2,20 @@ import React from 'react';
 import { portfolioData } from '../../data';
 import './Education.css';
 import SectionTitle from '../../components/SectionTitle/SectionTitle';
-import SectionIcon from '../../components/SectionIcon/SectionIcon';
-import SectionDescription from '../../components/SectionDescription/SectionDescription';
+import PortfolioItem from '../../components/PortfolioItem/PortfolioItem';
 import RelevantCoursework from '../../components/Education/RelevantCoursework';
+import { mergeCmsItems } from '../../utils/cmsDrafts';
 
-const Education = () => {
+const Education = ({ additionalDegrees = [], cmsPreview = null }) => {
+
   // Sort degrees by date in descending order (most recent first)
   const sortedDegrees = [...portfolioData.education.degrees].sort((a, b) => {
     // Assuming date format is "YYYY - YYYY" or "YYYY"
     // Extract the end year for comparison
     const getEndYear = (dateString) => {
       const parts = dateString.split(' - ');
-      return parseInt(parts[parts.length - 1]);
+      const endYear = parts[parts.length - 1];
+      return endYear.toLowerCase() === 'present' ? Number.MAX_SAFE_INTEGER : parseInt(endYear, 10);
     };
 
     const yearA = getEndYear(a.date);
@@ -21,6 +23,7 @@ const Education = () => {
 
     return yearB - yearA; // Descending order
   });
+  const degrees = mergeCmsItems('education', sortedDegrees, additionalDegrees);
 
   return (
     <div className="education-container" id="education" data-testid="education-section">
@@ -30,22 +33,9 @@ const Education = () => {
         courses={portfolioData.education.courses}
       />
       <div className="education-list">
-        {sortedDegrees.map((edu, index) => (
-          <div className="education-item" key={index}>
-            <div className="education-header">
-              <SectionIcon src={edu.logo} alt={edu.institutionName} className="education-logo" />
-              <SectionDescription
-                title={edu.institutionName}
-                subtitle={edu.degree}
-                date={edu.date}
-                location={edu.location}
-                className="education-details"
-                dateClassName="education-date"
-                locationClassName="education-location"
-              />
-            </div>
-            
-          </div>
+        {cmsPreview && <PortfolioItem type="education" theme="apple" item={cmsPreview} className="cms-item-placeholder" data-cms-placeholder="education" aria-hidden="true" inert={true} />}
+        {degrees.map((edu) => (
+          <PortfolioItem type="education" theme="apple" item={edu} key={edu.sourceId || edu.id} />
         ))}
       </div>
     </div>
